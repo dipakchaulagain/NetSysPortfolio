@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex min-h-screen">
+    <aside class="w-64 bg-gray-900 border-r border-cyan-500/20">
+        <div class="p-6 border-b border-cyan-500/20">
+            <a href="{{ url_for('admin.dashboard') }}" class="text-2xl font-bold text-cyan-400 font-mono">&lt;/Admin&gt;</a>
+        </div>
+        
+        <nav class="p-4">
+            <a href="{{ url_for('admin.dashboard') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition mb-2">
+                <i class="fas fa-chart-line w-6"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin.projects') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition mb-2">
+                <i class="fas fa-project-diagram w-6"></i>
+                <span>Projects</span>
+            </a>
+            <a href="{{ url_for('admin.skills') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition mb-2">
+                <i class="fas fa-code w-6"></i>
+                <span>Skills</span>
+            </a>
+            <a href="{{ url_for('admin.testimonials') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition mb-2">
+                <i class="fas fa-quote-right w-6"></i>
+                <span>Testimonials</span>
+            </a>
+            <a href="{{ url_for('admin.messages') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition mb-2">
+                <i class="fas fa-envelope w-6"></i>
+                <span>Messages</span>
+            </a>
+            <div class="border-t border-gray-800 my-4"></div>
+            <a href="{{ url_for('public.index') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-green-500/10 hover:text-green-400 rounded-lg transition mb-2">
+                <i class="fas fa-eye w-6"></i>
+                <span>View Site</span>
+            </a>
+            <a href="{{ url_for('admin.logout') }}" class="flex items-center px-4 py-3 text-gray-300 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition">
+                <i class="fas fa-sign-out-alt w-6"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <main class="flex-1 bg-gray-800/30">
+        <div class="p-8">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg border-2 {% if category == 'success' %}bg-green-900/20 border-green-500 text-green-400{% elif category == 'danger' %}bg-red-900/20 border-red-500 text-red-400{% else %}bg-blue-900/20 border-blue-500 text-blue-400{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block admin_content %}{% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-cyan-400">
+        <i class="fas fa-project-diagram mr-2"></i>Manage Projects
+    </h1>
+    <a href="{{ url_for('admin.add_project') }}" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition">
+        <i class="fas fa-plus mr-2"></i>Add Project
+    </a>
+</div>
+
+<div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg overflow-hidden">
+    <table class="w-full">
+        <thead class="bg-gray-800 border-b border-cyan-500/30">
+            <tr>
+                <th class="text-left p-4 text-gray-400 font-mono">Title</th>
+                <th class="text-left p-4 text-gray-400 font-mono">Technologies</th>
+                <th class="text-left p-4 text-gray-400 font-mono">Order</th>
+                <th class="text-right p-4 text-gray-400 font-mono">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                <td class="p-4 text-gray-300">{{ project.title }}</td>
+                <td class="p-4 text-gray-500 text-sm">{{ project.technologies[:50] }}{% if project.technologies and project.technologies|length > 50 %}...{% endif %}</td>
+                <td class="p-4 text-gray-400">{{ project.order }}</td>
+                <td class="p-4 text-right">
+                    <a href="{{ url_for('admin.edit_project', id=project.id) }}" class="text-cyan-400 hover:text-cyan-300 mr-4">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form method="POST" action="{{ url_for('admin.delete_project', id=project.id) }}" style="display: inline;" onsubmit="return confirm('Delete this project?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="text-red-400 hover:text-red-300 bg-transparent border-0 cursor-pointer">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="p-8 text-center text-gray-500">No projects found. Add your first project!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

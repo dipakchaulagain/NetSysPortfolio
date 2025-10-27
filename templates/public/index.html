@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Network & System Engineer Portfolio{% endblock %}
+
+{% block content %}
+<nav class="fixed w-full top-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-cyan-500/20">
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div class="text-2xl font-bold text-cyan-400 font-mono">&lt;/NetSysEng&gt;</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-300 hover:text-cyan-400 transition">Home</a>
+                <a href="#about" class="text-gray-300 hover:text-cyan-400 transition">About</a>
+                <a href="#skills" class="text-gray-300 hover:text-cyan-400 transition">Skills</a>
+                <a href="#projects" class="text-gray-300 hover:text-cyan-400 transition">Projects</a>
+                <a href="#testimonials" class="text-gray-300 hover:text-cyan-400 transition">Testimonials</a>
+                <a href="{{ url_for('public.contact') }}" class="text-gray-300 hover:text-cyan-400 transition">Contact</a>
+            </div>
+            <a href="/admin/login" class="text-sm text-gray-500 hover:text-cyan-400 transition">Admin</a>
+        </div>
+    </div>
+</nav>
+
+<section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <div class="absolute inset-0 opacity-10">
+        <div class="grid-background"></div>
+    </div>
+    <div class="container mx-auto px-6 text-center relative z-10">
+        <div class="mb-8">
+            <div class="inline-block border-2 border-cyan-500 rounded-lg p-1 mb-4">
+                <div class="bg-gray-800 px-4 py-2 rounded">
+                    <span class="text-cyan-400 font-mono text-sm">System.Status: <span class="text-green-400">ONLINE</span></span>
+                </div>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6">
+            <span class="text-cyan-400">&gt;_</span> Network &
+            <br><span class="text-green-400">System Engineer</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-400 mb-8 font-mono">
+            Building robust infrastructure | Optimizing networks | Securing systems
+        </p>
+        <div class="flex flex-col md:flex-row gap-4 justify-center">
+            <a href="#projects" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
+                View Projects
+            </a>
+            <a href="{{ url_for('public.contact') }}" class="border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-gray-900 font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
+                Get In Touch
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="py-20 bg-gray-800/50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <span class="text-cyan-400">//</span> About Me
+        </h2>
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-8">
+                <div class="mb-4">
+                    <span class="text-green-400 font-mono">user@portfolio:~$</span>
+                    <span class="text-gray-400 font-mono"> cat about.txt</span>
+                </div>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    Experienced Network and System Engineer specializing in designing, implementing, and maintaining complex IT infrastructure. 
+                    With expertise in network architecture, system administration, virtualization, and cloud technologies, I deliver scalable 
+                    and secure solutions for enterprise environments.
+                </p>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    My background includes extensive work with Cisco and Juniper networking equipment, VMware virtualization platforms, 
+                    Linux and Windows Server environments, and various cloud platforms including AWS, Azure, and GCP.
+                </p>
+                <p class="text-gray-300 leading-relaxed">
+                    I'm passionate about automation, security best practices, and staying current with emerging technologies in the 
+                    infrastructure and networking space.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="skills" class="py-20">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <span class="text-cyan-400">//</span> Technical Skills
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for category, skill_list in skills_by_category.items() %}
+            <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6 hover:border-cyan-500 transition">
+                <h3 class="text-xl font-bold text-cyan-400 mb-4 font-mono">{{ category }}</h3>
+                {% for skill in skill_list %}
+                <div class="mb-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-300">{{ skill.name }}</span>
+                        <span class="text-green-400 font-mono">{{ skill.proficiency }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-cyan-500 to-green-400 h-2 rounded-full" style="width: {{ skill.proficiency }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="py-20 bg-gray-800/50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <span class="text-cyan-400">//</span> Featured Projects
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for project in projects %}
+            <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg overflow-hidden hover:border-cyan-500 transition transform hover:scale-105">
+                {% if project.image %}
+                <div class="h-48 bg-gray-800 overflow-hidden">
+                    <img src="{{ project.image }}" alt="{{ project.title }}" class="w-full h-full object-cover">
+                </div>
+                {% else %}
+                <div class="h-48 bg-gradient-to-br from-cyan-900 to-gray-900 flex items-center justify-center">
+                    <i class="fas fa-network-wired text-6xl text-cyan-500/50"></i>
+                </div>
+                {% endif %}
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-2">{{ project.title }}</h3>
+                    <p class="text-gray-400 mb-4">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
+                    {% if project.technologies %}
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {% for tech in project.technologies.split(',') %}
+                        <span class="bg-gray-800 text-green-400 text-xs px-2 py-1 rounded border border-green-500/30">{{ tech.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if project.link %}
+                    <a href="{{ project.link }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-mono text-sm">
+                        View Project <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-8">
+            <a href="{{ url_for('public.projects') }}" class="border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-gray-900 font-bold py-3 px-8 rounded-lg transition inline-block">
+                View All Projects
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="testimonials" class="py-20">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <span class="text-cyan-400">//</span> Testimonials
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for testimonial in testimonials %}
+            <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6 hover:border-cyan-500 transition">
+                <div class="mb-4">
+                    <i class="fas fa-quote-left text-cyan-500 text-2xl"></i>
+                </div>
+                <p class="text-gray-300 mb-4 italic">{{ testimonial.message }}</p>
+                <div class="border-t border-gray-700 pt-4">
+                    <p class="text-cyan-400 font-bold">{{ testimonial.name }}</p>
+                    {% if testimonial.role %}
+                    <p class="text-gray-500 text-sm">{{ testimonial.role }}{% if testimonial.company %} at {{ testimonial.company }}{% endif %}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<footer class="bg-gray-900 border-t border-cyan-500/20 py-8">
+    <div class="container mx-auto px-6 text-center">
+        <p class="text-gray-500 font-mono">&copy; 2025 Network & System Engineer Portfolio. All rights reserved.</p>
+        <div class="mt-4 flex justify-center space-x-6">
+            <a href="#" class="text-gray-500 hover:text-cyan-400 transition"><i class="fab fa-linkedin text-2xl"></i></a>
+            <a href="#" class="text-gray-500 hover:text-cyan-400 transition"><i class="fab fa-github text-2xl"></i></a>
+            <a href="#" class="text-gray-500 hover:text-cyan-400 transition"><i class="fab fa-twitter text-2xl"></i></a>
+        </div>
+    </div>
+</footer>
+{% endblock %}

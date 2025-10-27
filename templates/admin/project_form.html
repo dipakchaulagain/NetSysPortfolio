@@ -1,0 +1,68 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="max-w-3xl">
+    <h1 class="text-3xl font-bold text-cyan-400 mb-8">
+        <i class="fas fa-project-diagram mr-2"></i>{{ title }}
+    </h1>
+    
+    <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6">
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.title.label }}</label>
+                {{ form.title(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.title.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.title.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.description.label }}</label>
+                {{ form.description(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none", rows="6") }}
+                {% if form.description.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.description.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.image.label }}</label>
+                {{ form.image(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.image.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.image.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.technologies.label }}</label>
+                {{ form.technologies(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.technologies.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.technologies.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.link.label }}</label>
+                {{ form.link(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.link.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.link.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.order.label }}</label>
+                {{ form.order(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.order.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.order.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="flex gap-4">
+                {{ form.submit(class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-8 rounded-lg transition cursor-pointer") }}
+                <a href="{{ url_for('admin.projects') }}" class="border-2 border-gray-600 text-gray-400 hover:border-gray-500 font-bold py-3 px-8 rounded-lg transition inline-block">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

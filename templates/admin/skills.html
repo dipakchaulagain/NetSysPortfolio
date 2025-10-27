@@ -1,0 +1,58 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-cyan-400">
+        <i class="fas fa-code mr-2"></i>Manage Skills
+    </h1>
+    <a href="{{ url_for('admin.add_skill') }}" class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition">
+        <i class="fas fa-plus mr-2"></i>Add Skill
+    </a>
+</div>
+
+<div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg overflow-hidden">
+    <table class="w-full">
+        <thead class="bg-gray-800 border-b border-cyan-500/30">
+            <tr>
+                <th class="text-left p-4 text-gray-400 font-mono">Name</th>
+                <th class="text-left p-4 text-gray-400 font-mono">Category</th>
+                <th class="text-left p-4 text-gray-400 font-mono">Proficiency</th>
+                <th class="text-left p-4 text-gray-400 font-mono">Order</th>
+                <th class="text-right p-4 text-gray-400 font-mono">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for skill in skills %}
+            <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                <td class="p-4 text-gray-300">{{ skill.name }}</td>
+                <td class="p-4 text-gray-500">{{ skill.category or 'Other' }}</td>
+                <td class="p-4">
+                    <div class="flex items-center">
+                        <div class="w-24 bg-gray-700 rounded-full h-2 mr-2">
+                            <div class="bg-gradient-to-r from-cyan-500 to-green-400 h-2 rounded-full" style="width: {{ skill.proficiency }}%"></div>
+                        </div>
+                        <span class="text-green-400 font-mono text-sm">{{ skill.proficiency }}%</span>
+                    </div>
+                </td>
+                <td class="p-4 text-gray-400">{{ skill.order }}</td>
+                <td class="p-4 text-right">
+                    <a href="{{ url_for('admin.edit_skill', id=skill.id) }}" class="text-cyan-400 hover:text-cyan-300 mr-4">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form method="POST" action="{{ url_for('admin.delete_skill', id=skill.id) }}" style="display: inline;" onsubmit="return confirm('Delete this skill?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="text-red-400 hover:text-red-300 bg-transparent border-0 cursor-pointer">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="p-8 text-center text-gray-500">No skills found. Add your first skill!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
