@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import db, Project, Skill, Testimonial, ContactMessage
+from models import db, Project, Skill, Testimonial, ContactMessage, Experience
 from forms import ContactForm
 
 public_bp = Blueprint('public', __name__)
@@ -8,6 +8,7 @@ public_bp = Blueprint('public', __name__)
 def index():
     projects = Project.query.order_by(Project.order, Project.date_created.desc()).limit(6).all()
     skills = Skill.query.order_by(Skill.category, Skill.order).all()
+    experiences = Experience.query.order_by(Experience.order, Experience.id.desc()).all()
     testimonials = Testimonial.query.order_by(Testimonial.order, Testimonial.date_created.desc()).all()
     
     skills_by_category = {}
@@ -20,6 +21,7 @@ def index():
     return render_template('public/index.html', 
                          projects=projects, 
                          skills_by_category=skills_by_category,
+                         experiences=experiences,
                          testimonials=testimonials)
 
 @public_bp.route('/projects')
