@@ -11,5 +11,9 @@ class Config:
         raise ValueError('DATABASE_URL environment variable must be set')
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }
     PERMANENT_SESSION_LIFETIME = timedelta(hours=24)
     WTF_CSRF_ENABLED = True
