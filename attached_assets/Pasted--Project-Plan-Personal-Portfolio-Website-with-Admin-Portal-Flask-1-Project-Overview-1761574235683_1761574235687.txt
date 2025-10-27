@@ -1,0 +1,160 @@
+# **Project Plan: Personal Portfolio Website with Admin Portal (Flask)**
+
+## **1. Project Overview**
+
+* **Objective:** Build a personal portfolio website showcasing projects, skills, and contact info, with a secure admin portal to manage content dynamically.
+* **Frontend & Backend:** Flask will serve as both backend and frontend using Jinja2 templates.
+* **Database:** SQLite or PostgreSQL for storing content (projects, skills, blog posts, testimonials, contact messages).
+
+---
+
+## **2. Architecture**
+
+* **Frontend:** Jinja2 templates, CSS (Tailwind/Bootstrap), JS for interactivity.
+* **Backend:** Flask with Blueprints to separate modules (frontend routes, admin routes, API endpoints).
+* **Database:** ORM (SQLAlchemy) for models like Users, Projects, Skills, Testimonials, BlogPosts.
+* **Authentication:** Admin login with password hashing (Werkzeug Security) and session management.
+* **Deployment:** WSGI server (Gunicorn) behind Nginx, optional Docker container.
+
+---
+
+## **3. Main Modules / Sections**
+
+### **A. Public Website (Frontend)**
+
+1. **Homepage / Hero**
+
+   * Dynamic content: name, title, tagline
+   * CTA buttons (linked to projects or contact)
+2. **About Me**
+
+   * Bio, education, skills overview
+   * Optional: downloadable resume
+3. **Portfolio / Projects**
+
+   * Dynamic list of projects with image, description, tech stack, live/demo link
+   * Filter functionality (optional)
+4. **Skills / Expertise**
+
+   * Visual representation of technical and soft skills
+5. **Testimonials**
+
+   * Carousel or list of quotes
+6. **Blog / Insights**
+
+   * Optional: list of posts with summary and read-more links
+7. **Contact**
+
+   * Form to submit messages (saved in DB)
+   * Social links
+
+---
+
+### **B. Admin Portal**
+
+1. **Authentication**
+
+   * Login page
+   * Session management
+   * Optional: role-based access if expanding later
+2. **Dashboard**
+
+   * Summary of content counts (projects, messages, posts)
+3. **Manage Projects**
+
+   * Add, edit, delete projects
+   * Upload images/files
+   * Assign tags/technologies
+4. **Manage Skills**
+
+   * CRUD operations on skill entries and proficiency levels
+5. **Manage Testimonials**
+
+   * Add/edit/delete testimonials
+6. **Manage Blog Posts**
+
+   * Optional: WYSIWYG editor
+7. **Manage Contact Messages**
+
+   * View received messages
+   * Mark as read, delete
+
+---
+
+### **C. Shared Utilities**
+
+* File upload handling (images for projects, profile)
+* Flash messages for user/admin feedback
+* Input validation (WTForms or custom)
+* Security features:
+
+  * CSRF protection
+  * Password hashing
+  * Session timeout
+
+---
+
+## **4. Database Models**
+
+1. **User (Admin)**
+
+   * id, username, password_hash
+2. **Project**
+
+   * id, title, description, image, technologies, link, date_created
+3. **Skill**
+
+   * id, name, proficiency_level (e.g., 1-100)
+4. **Testimonial**
+
+   * id, name, message, role/company
+5. **BlogPost** (Optional)
+
+   * id, title, content, date_created
+6. **ContactMessage**
+
+   * id, name, email, subject, message, date_received, status
+
+---
+
+## **5. Frontend Design Approach**
+
+* Responsive design using TailwindCSS/Bootstrap
+* Sticky header & smooth scrolling
+* Modular Jinja templates (header, footer, project card)
+* Optional light/dark mode toggle
+
+---
+
+## **6. Admin Design Approach**
+
+* Simple dashboard layout
+* CRUD forms with validation
+* Image/file previews for uploads
+* Table view for content management
+
+---
+
+## **7. API & Dynamic Content**
+
+* Admin portal serves content via forms → backend → DB
+* Public website queries DB for dynamic rendering
+* Optional: Flask REST API endpoints for future SPA integration
+
+---
+
+## **8. Security & Best Practices**
+
+* Admin authentication & hashed passwords
+* Input validation to prevent injection attacks
+* CSRF protection for forms
+* Proper error handling and logging
+
+---
+
+## **9. Deployment Considerations (Optional)**
+
+* Use Gunicorn + Nginx
+* Optional: Docker container for portability
+* Serve static files efficiently (CSS, JS, images)
+* Database backups
