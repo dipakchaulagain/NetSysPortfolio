@@ -4,14 +4,16 @@
 Professional portfolio website for a Network and System Engineer built with Flask. Features a modern dark-theme UI with network/infrastructure aesthetics and a secure admin portal for content management.
 
 ## Recent Changes
-- **October 27, 2025**: Initial project creation
+- **October 27, 2025**: Initial project creation and Experience feature addition
   - Implemented Flask application with blueprints architecture
-  - Created database models for User, Project, Skill, Testimonial, and ContactMessage
+  - Created database models for User, Project, Skill, Experience, Testimonial, and ContactMessage
   - Built secure authentication system with password hashing
   - Designed tech-themed responsive UI with Tailwind CSS
-  - Implemented CRUD operations for all content types
+  - Implemented CRUD operations for all content types including new Experience section
   - Added CSRF protection and security hardening
-  - Populated database with sample Network/System Engineer portfolio data
+  - Created comprehensive database population script (populate_db.py)
+  - Populated database with realistic Network/System Engineer portfolio data
+  - Added Professional Experience section to public homepage with 3 career entries
 
 ## User Preferences
 - Tech/engineering theme with dark mode (cyan/green accent colors)
@@ -38,8 +40,9 @@ Professional portfolio website for a Network and System Engineer built with Flas
 1. **User**: Admin authentication (hashed passwords)
 2. **Project**: Portfolio projects with images, tech stack, links
 3. **Skill**: Technical skills with proficiency levels and categories
-4. **Testimonial**: Client/colleague recommendations
-5. **ContactMessage**: Form submissions from visitors
+4. **Experience**: Professional work history with company, title, dates, descriptions
+5. **Testimonial**: Client/colleague recommendations
+6. **ContactMessage**: Form submissions from visitors
 
 ### Security Features
 - CSRF protection on all forms (Flask-WTF)
