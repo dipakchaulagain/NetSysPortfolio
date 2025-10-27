@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse, urljoin
-from models import db, User, Project, Skill, Testimonial, ContactMessage
-from forms import LoginForm, ProjectForm, SkillForm, TestimonialForm
+from models import db, User, Project, Skill, Testimonial, ContactMessage, Experience
+from forms import LoginForm, ProjectForm, SkillForm, TestimonialForm, ExperienceForm
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -43,6 +43,7 @@ def dashboard():
     project_count = Project.query.count()
     skill_count = Skill.query.count()
     testimonial_count = Testimonial.query.count()
+    experience_count = Experience.query.count()
     message_count = ContactMessage.query.filter_by(status='unread').count()
     total_messages = ContactMessage.query.count()
     
@@ -50,6 +51,7 @@ def dashboard():
                          project_count=project_count,
                          skill_count=skill_count,
                          testimonial_count=testimonial_count,
+                         experience_count=experience_count,
                          message_count=message_count,
                          total_messages=total_messages)
 
@@ -208,6 +210,62 @@ def delete_testimonial(id):
     db.session.commit()
     flash('Testimonial deleted successfully!', 'success')
     return redirect(url_for('admin.testimonials'))
+
+@admin_bp.route('/experiences')
+@login_required
+def experiences():
+    all_experiences = Experience.query.order_by(Experience.order, Experience.id.desc()).all()
+    return render_template('admin/experiences.html', experiences=all_experiences)
+
+@admin_bp.route('/experiences/add', methods=['GET', 'POST'])
+@login_required
+def add_experience():
+    form = ExperienceForm()
+    if form.validate_on_submit():
+        experience = Experience(
+            title=form.title.data,
+            company=form.company.data,
+            location=form.location.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+            description=form.description.data,
+            order=form.order.data
+        )
+        db.session.add(experience)
+        db.session.commit()
+        flash('Experience added successfully!', 'success')
+        return redirect(url_for('admin.experiences'))
+    
+    return render_template('admin/experience_form.html', form=form, title='Add Experience')
+
+@admin_bp.route('/experiences/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_experience(id):
+    experience = Experience.query.get_or_404(id)
+    form = ExperienceForm(obj=experience)
+    
+    if form.validate_on_submit():
+        experience.title = form.title.data
+        experience.company = form.company.data
+        experience.location = form.location.data
+        experience.start_date = form.start_date.data
+        experience.end_date = form.end_date.data
+        experience.description = form.description.data
+        experience.order = form.order.data
+        db.session.commit()
+        flash('Experience updated successfully!', 'success')
+        return redirect(url_for('admin.experiences'))
+    
+    return render_template('admin/experience_form.html', form=form, title='Edit Experience')
+
+@admin_bp.route('/experiences/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_experience(id):
+    experience = Experience.query.get_or_404(id)
+    db.session.delete(experience)
+    db.session.commit()
+    flash('Experience deleted successfully!', 'success')
+    return redirect(url_for('admin.experiences'))
 
 @admin_bp.route('/messages')
 @login_required

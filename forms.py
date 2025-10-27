@@ -37,3 +37,13 @@ class TestimonialForm(FlaskForm):
     message = TextAreaField('Testimonial', validators=[DataRequired()])
     order = IntegerField('Display Order', validators=[Optional(), NumberRange(min=0)], default=0)
     submit = SubmitField('Save Testimonial')
+
+class ExperienceForm(FlaskForm):
+    title = StringField('Job Title', validators=[DataRequired(), Length(min=2, max=200)])
+    company = StringField('Company', validators=[DataRequired(), Length(min=2, max=200)])
+    location = StringField('Location', validators=[Optional(), Length(max=200)])
+    start_date = StringField('Start Date (e.g., Jan 2020)', validators=[DataRequired(), Length(max=50)])
+    end_date = StringField('End Date (e.g., Dec 2022 or "Present")', validators=[Optional(), Length(max=50)])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    order = IntegerField('Display Order', validators=[Optional(), NumberRange(min=0)], default=0)
+    submit = SubmitField('Save Experience')
