@@ -5,6 +5,7 @@ integrations = ["python_log_in_with_replit:1.0.0", "python_database:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["openssl", "postgresql"]
 
 [workflows]
 runButton = "Project"
@@ -24,7 +25,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python app.py"
+args = "uv run python app.py"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -35,5 +36,9 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 45651
+localPort = 36371
 externalPort = 3000
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
