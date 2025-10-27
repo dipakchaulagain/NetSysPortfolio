@@ -1,0 +1,78 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="max-w-3xl">
+    <h1 class="text-3xl font-bold text-cyan-400 mb-8">
+        <i class="fas fa-briefcase mr-2"></i>{{ title }}
+    </h1>
+    
+    <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6">
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.title.label }}</label>
+                {{ form.title(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.title.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.title.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.company.label }}</label>
+                {{ form.company(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.company.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.company.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.location.label }}</label>
+                {{ form.location(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.location.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.location.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-400 mb-2 font-mono">{{ form.start_date.label }}</label>
+                    {{ form.start_date(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                    {% if form.start_date.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ form.start_date.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 mb-2 font-mono">{{ form.end_date.label }}</label>
+                    {{ form.end_date(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                    {% if form.end_date.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ form.end_date.errors[0] }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.description.label }}</label>
+                {{ form.description(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none", rows="6") }}
+                {% if form.description.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.description.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.order.label }}</label>
+                {{ form.order(class="w-full bg-gray-800 border-2 border-cyan-500/30 rounded-lg px-4 py-2 text-gray-100 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.order.errors %}
+                    <p class="text-red-400 text-sm mt-1">{{ form.order.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="flex gap-4">
+                {{ form.submit(class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-8 rounded-lg transition cursor-pointer") }}
+                <a href="{{ url_for('admin.experiences') }}" class="border-2 border-gray-600 text-gray-400 hover:border-gray-500 font-bold py-3 px-8 rounded-lg transition inline-block">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
