@@ -41,7 +41,7 @@ A professional Flask-based portfolio website with a secure admin portal for mana
 **Backend:**
 - Flask 3.x - Python web framework
 - SQLAlchemy - ORM for database operations
-- PostgreSQL (Neon) - Production-grade database
+- PostgreSQL - Production-grade database
 - Flask-Login - User authentication
 - Flask-WTF - Forms and CSRF protection
 - Werkzeug - Password hashing and security utilities
@@ -53,410 +53,750 @@ A professional Flask-based portfolio website with a secure admin portal for mana
 - Font Awesome 6.x - Icon library
 - Custom CSS - Dark mode theme with cyan/green accents
 
-**Development:**
+**Development & Deployment:**
 - Python 3.11
-- UV - Fast Python package manager
+- Docker & Docker Compose
 - PostgreSQL 15+
+- UV - Fast Python package manager
 
 ## 📋 Prerequisites
 
-- Python 3.11+
-- PostgreSQL database (automatically configured in Replit)
-- UV package manager (automatically configured in Replit)
+### System Requirements
+- **Operating System**: Windows 10/11, macOS, or Linux
+- **RAM**: Minimum 4GB (8GB recommended)
+- **Storage**: At least 2GB free space
+- **Network**: Internet connection for downloading dependencies
 
-## 🔧 Environment Variables
+### Required Software
+- **Docker**: Version 20.10+ with Docker Compose
+- **Git**: For cloning the repository
+- **Text Editor**: VS Code, Sublime Text, or any preferred editor
 
-The following environment variables are **required** and already configured in Replit:
+### Docker Installation
+Choose your operating system:
 
+**Windows:**
+1. Download Docker Desktop from [docker.com](https://www.docker.com/products/docker-desktop/)
+2. Run the installer and follow the setup wizard
+3. Restart your computer when prompted
+4. Verify installation: Open Command Prompt and run `docker --version`
+
+**macOS:**
+1. Download Docker Desktop from [docker.com](https://www.docker.com/products/docker-desktop/)
+2. Drag Docker to Applications folder
+3. Launch Docker Desktop
+4. Verify installation: Open Terminal and run `docker --version`
+
+**Linux (Ubuntu/Debian):**
 ```bash
-SESSION_SECRET=your-secure-random-secret-key
-DATABASE_URL=postgresql://user:password@host:port/database
-PGHOST=your-postgres-host
-PGPORT=5432
-PGUSER=your-postgres-user
-PGPASSWORD=your-postgres-password
-PGDATABASE=your-database-name
+# Update package index
+sudo apt update
+
+# Install Docker
+sudo apt install docker.io docker-compose
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+
+# Log out and log back in, then verify
+docker --version
 ```
 
-For local development, create a `.env` file with these variables.
+## 🔧 Environment Configuration
 
-## 🚀 Quick Start (Replit)
+### 1. Clone the Repository
+```bash
+git clone <your-repository-url>
+cd NetSysPortfolio
+```
 
-The application is already configured and running in Replit:
+### 2. Environment Variables Setup
+Copy the environment template and configure your settings:
 
-1. **View the live site** - Click the webview or open the URL
-2. **Access admin panel** - Click "Admin" in the top-right corner
-   - Username: `admin`
-   - Password: `admin123` (change this in production!)
-3. **Start customizing** - Log in to the admin panel to update content
+```bash
+cp env.template .env
+```
+
+Edit the `.env` file with your configuration:
+
+```bash
+# Flask Configuration
+SESSION_SECRET=your-very-secure-random-secret-key-change-this-in-production
+FLASK_ENV=development
+FLASK_DEBUG=true
+
+# Database Configuration
+DATABASE_URL=postgresql://portfolio_user:portfolio_pass@db:5432/portfolio_db
+PGHOST=db
+PGPORT=5432
+PGUSER=portfolio_user
+PGPASSWORD=portfolio_pass
+PGDATABASE=portfolio_db
+
+# Admin Configuration
+ADMIN_PASSWORD=your-strong-admin-password-minimum-8-characters
+
+# Demo Data Configuration
+POPULATE_DEMO_DATA=true
+```
+
+### 3. Generate Secure Secrets
+
+**For SESSION_SECRET:**
+```bash
+# Generate a secure random key
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+**For ADMIN_PASSWORD:**
+- Use a strong password with at least 8 characters
+- Include uppercase, lowercase, numbers, and special characters
+- Example: `MyStr0ng!P@ssw0rd`
+
+## 🐳 Docker Deployment Guide
+
+### Quick Start (Recommended)
+
+1. **Start the application:**
+```bash
+docker-compose up -d
+```
+
+2. **Initialize the database:**
+```bash
+docker-compose exec web python populate_db.py
+```
+
+3. **Access the application:**
+- **Website**: http://localhost:5000
+- **Admin Panel**: http://localhost:5000/admin/login
+  - Username: `admin`
+  - Password: `admin123` (or your ADMIN_PASSWORD)
+
+### Detailed Deployment Steps
+
+#### Step 1: Build and Start Containers
+```bash
+# Build and start all services in detached mode
+docker-compose up -d --build
+
+# Check container status
+docker-compose ps
+```
+
+Expected output:
+```
+NAME                    IMAGE                 COMMAND                  SERVICE   CREATED         STATUS         PORTS
+netsysportfolio-db-1    postgres:15           "docker-entrypoint.s…"   db        2 minutes ago   Up 2 minutes   0.0.0.0:5432->5432/tcp
+netsysportfolio-web-1   netsysportfolio-web   "gunicorn --bind 0.0…"   web       2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp
+```
+
+#### Step 2: Initialize Database
+```bash
+# Run database initialization script
+docker-compose exec web python populate_db.py
+```
+
+Expected output:
+```
+Creating database tables...
+Clearing existing data...
+Creating admin user...
+Adding skills...
+Adding experience...
+Adding projects...
+Adding testimonials...
+
+Database populated successfully!
+
+Admin credentials:
+Username: admin
+Password: admin123
+```
+
+#### Step 3: Verify Deployment
+```bash
+# Test the application
+curl -I http://localhost:5000
+
+# Check application logs
+docker-compose logs web --tail=10
+```
+
+### Docker Services Overview
+
+The `docker-compose.yml` includes:
+
+**Web Service (`web`):**
+- **Image**: Custom Flask application
+- **Port**: 5000 (mapped to host)
+- **Command**: Gunicorn with 4 workers
+- **Dependencies**: Database service
+- **Volumes**: Application code mounted for development
+
+**Database Service (`db`):**
+- **Image**: PostgreSQL 15
+- **Port**: 5432 (mapped to host)
+- **Database**: portfolio_db
+- **User**: portfolio_user
+- **Password**: portfolio_pass
+- **Volumes**: Persistent data storage
+
+## 🚀 Production Deployment
+
+### Production Environment Setup
+
+1. **Update Environment Variables:**
+```bash
+# In .env file
+SESSION_SECRET=your-production-secret-key-32-chars-minimum
+ADMIN_PASSWORD=your-production-admin-password
+FLASK_ENV=production
+FLASK_DEBUG=false
+POPULATE_DEMO_DATA=false
+```
+
+2. **Deploy with Docker Compose:**
+```bash
+# Pull latest changes
+git pull origin main
+
+# Deploy production stack
+docker-compose up -d --build
+
+# Initialize database (first time only)
+docker-compose exec web python populate_db.py
+```
+
+### Production Security Checklist
+
+- [ ] **Strong SESSION_SECRET**: Use `python -c "import secrets; print(secrets.token_hex(32))"`
+- [ ] **Secure ADMIN_PASSWORD**: Minimum 12 characters with complexity
+- [ ] **FLASK_DEBUG=false**: Disable debug mode
+- [ ] **FLASK_ENV=production**: Set production environment
+- [ ] **POPULATE_DEMO_DATA=false**: Disable demo data in production
+- [ ] **HTTPS Configuration**: Set up SSL/TLS certificates
+- [ ] **Firewall Rules**: Restrict database port access
+- [ ] **Regular Backups**: Implement automated database backups
+
+### Reverse Proxy Setup (Nginx)
+
+Create `/etc/nginx/sites-available/portfolio`:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com www.yourdomain.com;
+    
+    # SSL Configuration
+    ssl_certificate /path/to/your/certificate.crt;
+    ssl_certificate_key /path/to/your/private.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512;
+    
+    # Security Headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+    
+    # Proxy Configuration
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $server_name;
+        
+        # Timeouts
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # Static files optimization
+    location /static/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+```
+
+Enable the site:
+```bash
+sudo ln -s /etc/nginx/sites-available/portfolio /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### SSL Certificate Setup (Let's Encrypt)
+
+```bash
+# Install Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obtain certificate
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+# Auto-renewal setup
+sudo crontab -e
+# Add: 0 12 * * * /usr/bin/certbot renew --quiet
+```
 
 ## 💻 Local Development Setup
 
-### Installation
+### Option 1: Docker Development (Recommended)
 
-1. **Clone the repository:**
+1. **Clone and setup:**
 ```bash
 git clone <your-repo-url>
-cd <project-directory>
+cd NetSysPortfolio
+cp env.template .env
+# Edit .env with your settings
 ```
 
-2. **Install dependencies using UV:**
+2. **Start development environment:**
 ```bash
+docker-compose up -d
+docker-compose exec web python populate_db.py
+```
+
+3. **Access application:**
+- Website: http://localhost:5000
+- Admin: http://localhost:5000/admin/login
+
+### Option 2: Native Python Development
+
+1. **Install Python 3.11+**
+2. **Install dependencies:**
+```bash
+# Using pip
+pip install -r requirements.txt
+
+# Or using UV (faster)
 uv pip install -r requirements.txt
 ```
 
-Or using pip:
+3. **Setup PostgreSQL:**
 ```bash
-pip install flask flask-sqlalchemy flask-login flask-wtf flask-dance \
-            gunicorn python-dotenv psycopg2-binary email-validator \
-            wtforms werkzeug oauthlib pyjwt
+# Install PostgreSQL
+sudo apt install postgresql postgresql-contrib
+
+# Create database and user
+sudo -u postgres psql
+CREATE DATABASE portfolio_db;
+CREATE USER portfolio_user WITH PASSWORD 'portfolio_pass';
+GRANT ALL PRIVILEGES ON DATABASE portfolio_db TO portfolio_user;
+\q
 ```
 
-3. **Set up environment variables:**
-Create a `.env` file in the project root:
+4. **Configure environment:**
 ```bash
-SESSION_SECRET=your-random-secret-key-here
-DATABASE_URL=postgresql://user:password@localhost:5432/portfolio_db
+cp env.template .env
+# Edit .env with local database settings
 ```
 
-4. **Initialize and populate the database:**
+5. **Run application:**
 ```bash
-uv run python populate_db.py
+python app.py
 ```
-
-This script will:
-- Create all database tables (User, Project, Skill, Experience, Testimonial, ContactMessage)
-- Create an admin user (username: admin, password: admin123)
-- Populate with realistic sample data:
-  - 21 technical skills across 6 categories
-  - 6 infrastructure projects
-  - 3 professional experiences
-  - 3 testimonials
-
-5. **Run the application:**
-```bash
-uv run python app.py
-```
-
-The application will be available at `http://localhost:5000`
 
 ## 📁 Project Structure
 
 ```
-.
-├── app.py                     # Main Flask application and configuration
-├── models.py                  # SQLAlchemy database models
-├── forms.py                   # WTForms for validation and CSRF
-├── populate_db.py             # Database initialization and sample data
+NetSysPortfolio/
+├── app.py                     # Main Flask application
+├── config.py                  # Configuration settings
+├── models.py                  # Database models
+├── forms.py                   # WTForms definitions
+├── populate_db.py             # Database initialization
+├── env.template               # Environment variables template
+├── docker-compose.yml         # Docker Compose configuration
+├── Dockerfile                 # Docker image configuration
 ├── requirements.txt           # Python dependencies
+├── pyproject.toml             # Project metadata
+├── .gitignore                 # Git ignore rules
+├── README.md                  # This file
 ├── routes/
 │   ├── __init__.py
-│   ├── public.py              # Public-facing routes (home, projects, contact)
-│   └── admin.py               # Admin panel routes (CRUD operations)
+│   ├── public.py              # Public routes (home, projects, contact)
+│   └── admin.py               # Admin panel routes
 ├── templates/
-│   ├── base.html              # Base template with navigation
+│   ├── base.html              # Base template
 │   ├── public/
-│   │   └── index.html         # Main public portfolio page
+│   │   ├── index.html         # Homepage
+│   │   ├── projects.html      # Projects page
+│   │   └── contact.html       # Contact page
 │   ├── admin/
-│   │   ├── base_admin.html    # Admin panel base template
+│   │   ├── base_admin.html    # Admin base template
 │   │   ├── dashboard.html     # Admin dashboard
-│   │   ├── login.html         # Admin login page
+│   │   ├── login.html         # Admin login
 │   │   ├── projects.html      # Project management
 │   │   ├── project_form.html  # Add/edit project
 │   │   ├── skills.html        # Skill management
 │   │   ├── skill_form.html    # Add/edit skill
 │   │   ├── experiences.html   # Experience management
-│   │   ├── experience_form.html  # Add/edit experience
+│   │   ├── experience_form.html # Add/edit experience
 │   │   ├── testimonials.html  # Testimonial management
 │   │   ├── testimonial_form.html # Add/edit testimonial
 │   │   └── messages.html      # Contact message inbox
 │   └── errors/
-│       └── 404.html           # Custom 404 error page
+│       ├── 404.html           # 404 error page
+│       └── 500.html            # 500 error page
 └── static/
     ├── css/
-    │   └── style.css          # Custom styles and animations
+    │   └── style.css          # Custom styles
     └── js/
-        └── main.js            # Client-side JavaScript
-
+        └── main.js            # JavaScript
 ```
 
-## 📊 Database Models
+## 📊 Database Schema
 
-### User
-- Admin authentication with hashed passwords
-- Username and email fields
-- Used for admin panel access
+### Tables Overview
 
-### Project
-- Portfolio projects showcase
-- Fields: title, description, image_url, github_url, demo_url, technologies, display_order
-- Technologies stored as comma-separated string
+**Users Table:**
+- `id` (Primary Key)
+- `username` (Unique)
+- `password_hash`
+- `created_at`
 
-### Skill
-- Technical skills with proficiency levels
-- Fields: name, category, proficiency (0-100), display_order
-- Categories: Networking, Systems, Virtualization, Cloud, Automation, Security
+**Projects Table:**
+- `id` (Primary Key)
+- `title`
+- `description`
+- `image` (URL)
+- `technologies` (Comma-separated)
+- `link` (Project URL)
+- `date_created`
+- `order` (Display order)
 
-### Experience
-- Professional work history
-- Fields: company, title, location, start_date, end_date, description, display_order
-- Supports current positions (end_date can be null)
+**Skills Table:**
+- `id` (Primary Key)
+- `name`
+- `category` (Networking, Systems, etc.)
+- `proficiency` (0-100)
+- `order` (Display order)
 
-### Testimonial
-- Client and colleague recommendations
-- Fields: name, role, company, content, display_order
+**Experiences Table:**
+- `id` (Primary Key)
+- `title`
+- `company`
+- `location`
+- `start_date`
+- `end_date` (NULL for current)
+- `description`
+- `order` (Display order)
 
-### ContactMessage
-- Visitor inquiries from contact form
-- Fields: name, email, subject, message, is_read, created_at
-- Admin can mark as read and delete
+**Testimonials Table:**
+- `id` (Primary Key)
+- `name`
+- `role`
+- `company`
+- `message`
+- `order` (Display order)
+
+**ContactMessages Table:**
+- `id` (Primary Key)
+- `name`
+- `email`
+- `subject`
+- `message`
+- `is_read` (Boolean)
+- `created_at`
 
 ## 🎨 Customization Guide
 
-### Adding/Editing Projects
+### Adding/Editing Content
 
-1. Log in to the admin panel (`/admin/login`)
+#### Projects Management
+1. Access admin panel: `http://yourdomain.com/admin/login`
 2. Navigate to "Projects"
 3. Click "Add Project"
-4. Fill in the form:
+4. Fill in details:
    - **Title**: Project name
-   - **Description**: Detailed project description
-   - **Image URL**: Link to project screenshot/logo
-   - **GitHub URL**: Repository link (optional)
-   - **Demo URL**: Live demo link (optional)
-   - **Technologies**: Comma-separated list (e.g., "Cisco, MPLS, BGP")
-   - **Display Order**: Lower numbers appear first (e.g., 1, 2, 3)
-5. Click "Save Project"
+   - **Description**: Detailed description
+   - **Image URL**: Link to project image
+   - **Technologies**: Comma-separated list
+   - **Link**: Project URL (optional)
+   - **Display Order**: Lower numbers appear first
 
-### Managing Skills
-
-1. Navigate to "Skills" in the admin panel
-2. Add new skills with:
-   - **Name**: Skill name (e.g., "VMware vSphere")
-   - **Category**: Choose from dropdown (Networking, Systems, etc.)
-   - **Proficiency**: 0-100 (shows as progress bar)
+#### Skills Management
+1. Navigate to "Skills"
+2. Add skills with:
+   - **Name**: Skill name
+   - **Category**: Choose from dropdown
+   - **Proficiency**: 0-100 percentage
    - **Display Order**: Order within category
-3. Edit or delete existing skills
 
-### Adding Professional Experience
-
-1. Navigate to "Experiences" in the admin panel
-2. Add work history entries:
+#### Experience Management
+1. Navigate to "Experiences"
+2. Add work history:
    - **Company**: Company name
    - **Title**: Job title
-   - **Location**: City, State/Country (optional)
-   - **Start Date**: Format: MMM YYYY (e.g., "Jan 2020")
-   - **End Date**: Format: MMM YYYY or leave blank for current position
+   - **Location**: City, State/Country
+   - **Start/End Date**: Format "MMM YYYY"
    - **Description**: Achievements and responsibilities
-   - **Display Order**: Most recent jobs should have lower numbers
-3. Current positions will display "Present" instead of end date
 
-### Managing Testimonials
+### Theme Customization
 
-1. Navigate to "Testimonials"
-2. Add client/colleague recommendations:
-   - **Name**: Person's name
-   - **Role**: Their job title
-   - **Company**: Their company
-   - **Content**: The testimonial text
-   - **Display Order**: Order of appearance
-
-### Viewing Contact Messages
-
-1. Navigate to "Messages" in the admin panel
-2. View all contact form submissions
-3. Mark as read (changes background color)
-4. Delete spam or resolved messages
-5. Unread messages are highlighted for easy identification
-
-## 🎨 Customizing the Theme
-
-### Colors
-The theme uses CSS variables defined in `static/css/style.css`:
-- Primary: Cyan (#06b6d4)
-- Secondary: Green (#10b981)
-- Background: Dark navy (#0f172a, #1e293b)
-
-To change colors, edit the CSS variables or Tailwind classes in templates.
-
-### Fonts
-Currently using system fonts. To add custom fonts:
-1. Link Google Fonts or upload font files
-2. Update `font-family` in base templates
-
-### Layout
-All templates use Tailwind CSS utility classes. Modify classes directly in templates for layout changes.
-
-## 🚀 Production Deployment
-
-### Using Replit Deploy
-
-1. Click the "Deploy" button in Replit
-2. Configure deployment settings:
-   - Deployment target: Autoscale or VM
-   - Environment variables are automatically included
-3. Click "Deploy"
-
-### Manual Deployment
-
-For deployment to other platforms:
-
-1. **Disable Debug Mode:**
-   - Set `debug=False` in `app.py`
-
-2. **Use Production Server:**
-   ```bash
-   gunicorn --bind 0.0.0.0:5000 --workers 4 app:app
-   ```
-
-3. **Set Strong Secrets:**
-   - Generate a strong SESSION_SECRET: `python -c "import secrets; print(secrets.token_hex(32))"`
-   - Change the admin password from default
-
-4. **Enable HTTPS:**
-   - Use SSL/TLS certificates (Let's Encrypt recommended)
-   - Configure reverse proxy (Nginx/Apache)
-
-5. **Database Backups:**
-   - Set up regular PostgreSQL backups
-   - Consider automated backup solutions
-
-6. **Environment Variables:**
-   - Ensure all secrets are properly configured
-   - Never commit secrets to version control
-
-### Production Checklist
-
-- [ ] Change admin password from default
-- [ ] Set strong SESSION_SECRET
-- [ ] Disable Flask debug mode
-- [ ] Use Gunicorn or similar WSGI server
-- [ ] Enable HTTPS/SSL
-- [ ] Set up database backups
-- [ ] Configure error monitoring
-- [ ] Set up logging
-- [ ] Test all admin features
-- [ ] Test contact form submissions
-- [ ] Verify responsive design on all devices
-
-## 📝 Sample Data
-
-The `populate_db.py` script includes comprehensive sample data:
-
-**Skills (21 total):**
-- Networking: Cisco IOS, Juniper JunOS, MPLS, BGP, OSPF, VLANs
-- Virtualization: VMware vSphere, VMware NSX, Hyper-V
-- Systems: Linux Administration, Windows Server, Active Directory
-- Cloud: AWS, Azure, Terraform
-- Automation: Python, Ansible, Bash Scripting
-- Security: Firewalls, VPN, IDS/IPS
-
-**Projects (6 total):**
-- Enterprise Network Redesign
-- VMware vSphere Deployment
-- AWS Cloud Migration
-- Network Security Enhancement
-- SD-WAN Implementation
-- Automated Backup Solution
-
-**Professional Experience (3 entries):**
-- Senior Network Engineer at TechCorp Solutions (2020-Present)
-- Network & Systems Administrator at Global Tech Services (2017-2020)
-- Junior Network Engineer at DataFlow Inc. (2015-2017)
-
-**Testimonials (3 entries):**
-- Network architecture testimonial
-- Project management testimonial
-- Problem-solving testimonial
-
-You can delete or modify all sample data through the admin panel.
-
-## 🔍 Admin Panel Features
-
-### Dashboard
-- Total counts for projects, skills, experiences, and testimonials
-- Unread message count with alert badge
-- Quick navigation to all management sections
-
-### Project Management
-- List all projects with preview
-- Add new projects with rich details
-- Edit existing projects
-- Delete projects (with confirmation)
-- Reorder projects via display_order
-
-### Skill Management
-- Organized by category
-- Visual proficiency bars
-- Add, edit, delete skills
-- Category-based organization
-
-### Experience Management
-- Chronological work history
-- Support for current positions
-- Location information (optional)
-- Detailed job descriptions
-
-### Message Inbox
-- View all contact submissions
-- Mark messages as read/unread
-- Delete messages
-- Visual highlighting for unread messages
-- Sender details (name, email, subject)
-
-## 🐛 Troubleshooting
-
-### Database Connection Issues
-```bash
-# Check PostgreSQL is running
-psql $DATABASE_URL
-
-# Reinitialize database
-uv run python populate_db.py
+#### Colors
+Edit `static/css/style.css`:
+```css
+:root {
+    --primary-color: #06b6d4;    /* Cyan */
+    --secondary-color: #10b981;  /* Green */
+    --background-dark: #0f172a;  /* Dark navy */
+    --background-light: #1e293b; /* Lighter navy */
+}
 ```
 
-### Admin Login Not Working
-- Verify admin user exists in database
-- Check ADMIN_PASSWORD environment variable
-- Try resetting password by running populate_db.py again
+#### Fonts
+Add custom fonts in `templates/base.html`:
+```html
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+```
 
-### Styles Not Loading
-- Check Tailwind CSS CDN is accessible
-- Clear browser cache
-- Verify static files are being served correctly
+## 🔍 Troubleshooting
 
-### Port Already in Use
+### Common Issues
+
+#### Docker Issues
+
+**Container won't start:**
 ```bash
-# Kill process on port 5000
-lsof -ti:5000 | xargs kill -9
+# Check logs
+docker-compose logs web
+docker-compose logs db
 
-# Or use a different port in app.py
-app.run(debug=True, host='0.0.0.0', port=5001)
+# Restart containers
+docker-compose restart
+
+# Rebuild containers
+docker-compose up --build
+```
+
+**Database connection errors:**
+```bash
+# Check database status
+docker-compose exec db psql -U portfolio_user -d portfolio_db
+
+# Reinitialize database
+docker-compose exec web python populate_db.py
+```
+
+**Port already in use:**
+```bash
+# Find process using port 5000
+netstat -tulpn | grep :5000
+
+# Kill process (Linux/macOS)
+sudo kill -9 $(lsof -ti:5000)
+
+# Or change port in docker-compose.yml
+```
+
+#### Application Issues
+
+**Admin login not working:**
+- Verify admin user exists: Check database
+- Reset password: Run `populate_db.py` again
+- Check ADMIN_PASSWORD environment variable
+
+**Styles not loading:**
+- Check Tailwind CSS CDN accessibility
+- Clear browser cache
+- Verify static files are being served
+
+**Database errors:**
+- Check PostgreSQL is running
+- Verify DATABASE_URL is correct
+- Ensure database exists and user has permissions
+
+### Log Analysis
+
+**View application logs:**
+```bash
+# All logs
+docker-compose logs
+
+# Web service logs only
+docker-compose logs web
+
+# Follow logs in real-time
+docker-compose logs -f web
+
+# Last 50 lines
+docker-compose logs --tail=50 web
+```
+
+**Common log patterns:**
+- `Worker failed to boot`: Check app.py for syntax errors
+- `relation "table" does not exist`: Run populate_db.py
+- `duplicate key value`: Database already initialized
+
+## 📈 Performance Optimization
+
+### Production Optimizations
+
+1. **Database Indexing:**
+```sql
+-- Add indexes for better performance
+CREATE INDEX idx_projects_order ON projects("order");
+CREATE INDEX idx_skills_category ON skills(category);
+CREATE INDEX idx_experiences_order ON experiences("order");
+```
+
+2. **Static File Caching:**
+```nginx
+# In Nginx configuration
+location /static/ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+}
+```
+
+3. **Gunicorn Configuration:**
+```bash
+# Adjust worker count based on CPU cores
+gunicorn --bind 0.0.0.0:5000 --workers 4 --worker-class sync app:app
+```
+
+### Monitoring
+
+**Health Check Endpoint:**
+```bash
+# Check application health
+curl http://localhost:5000/
+
+# Check database connectivity
+docker-compose exec web python -c "from models import db; print('DB OK' if db.engine.execute('SELECT 1') else 'DB Error')"
+```
+
+## 🔄 Backup & Recovery
+
+### Database Backup
+
+**Create backup:**
+```bash
+# Backup database
+docker-compose exec db pg_dump -U portfolio_user portfolio_db > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Compress backup
+gzip backup_*.sql
+```
+
+**Restore backup:**
+```bash
+# Stop application
+docker-compose down
+
+# Restore database
+docker-compose up -d db
+docker-compose exec -T db psql -U portfolio_user portfolio_db < backup_file.sql
+
+# Restart application
+docker-compose up -d
+```
+
+### Automated Backups
+
+**Create backup script (`backup.sh`):**
+```bash
+#!/bin/bash
+BACKUP_DIR="/path/to/backups"
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="$BACKUP_DIR/portfolio_backup_$DATE.sql"
+
+# Create backup
+docker-compose exec -T db pg_dump -U portfolio_user portfolio_db > $BACKUP_FILE
+
+# Compress backup
+gzip $BACKUP_FILE
+
+# Remove backups older than 30 days
+find $BACKUP_DIR -name "portfolio_backup_*.sql.gz" -mtime +30 -delete
+
+echo "Backup completed: $BACKUP_FILE.gz"
+```
+
+**Schedule backups (crontab):**
+```bash
+# Edit crontab
+crontab -e
+
+# Add daily backup at 2 AM
+0 2 * * * /path/to/backup.sh
 ```
 
 ## 📚 Additional Resources
 
+### Documentation Links
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Flask-Login Documentation](https://flask-login.readthedocs.io/)
+- [Docker Documentation](https://docs.docker.com/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Gunicorn Documentation](https://docs.gunicorn.org/)
+
+### Security Resources
+- [OWASP Flask Security](https://owasp.org/www-project-flask-security/)
+- [Flask Security Best Practices](https://flask.palletsprojects.com/en/2.3.x/security/)
+- [Docker Security Best Practices](https://docs.docker.com/engine/security/)
 
 ## 🤝 Contributing
 
-This is a personal portfolio template. Feel free to fork and customize for your own use.
+### Development Workflow
+
+1. **Fork the repository**
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make changes and test locally**
+4. **Commit changes:**
+   ```bash
+   git commit -m "Add: your feature description"
+   ```
+5. **Push to your fork:**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+6. **Create a Pull Request**
+
+### Code Standards
+
+- Follow PEP 8 Python style guide
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Test all changes locally before submitting
 
 ## 📄 License
 
-This project is open source and available for personal use.
+This project is open source and available under the [MIT License](LICENSE).
 
 ## 💬 Support
 
-For questions or issues:
-- Use the contact form on the live website
-- Check the troubleshooting section above
-- Review Flask and PostgreSQL documentation
+### Getting Help
+
+- **Issues**: Create a GitHub issue for bugs or feature requests
+- **Documentation**: Check this README and inline code comments
+- **Community**: Join discussions in GitHub Discussions
+
+### Contact Information
+
+- **Website**: [Your Portfolio URL]
+- **Email**: [Your Email]
+- **LinkedIn**: [Your LinkedIn Profile]
 
 ---
 
 **Built with Flask and ❤️ for Network and System Engineers**
+
+*Last updated: October 2025*

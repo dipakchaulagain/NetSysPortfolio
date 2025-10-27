@@ -1,7 +1,7 @@
 [project]
-name = "repl-nix-workspace"
-version = "0.1.0"
-description = "Add your description here"
+name = "netsys-portfolio"
+version = "1.0.0"
+description = "Professional Network & System Engineer Portfolio Website with Admin Portal"
 requires-python = ">=3.11"
 dependencies = [
     "email-validator>=2.3.0",

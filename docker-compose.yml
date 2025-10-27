@@ -1,0 +1,37 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://portfolio_user:portfolio_pass@db:5432/portfolio_db
+      - PGHOST=db
+      - PGPORT=5432
+      - PGUSER=portfolio_user
+      - PGPASSWORD=portfolio_pass
+      - PGDATABASE=portfolio_db
+      - SESSION_SECRET=${SESSION_SECRET:-your-secure-random-secret-key-change-this}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - POPULATE_DEMO_DATA=${POPULATE_DEMO_DATA:-true}
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - FLASK_DEBUG=${FLASK_DEBUG:-true}
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=portfolio_db
+      - POSTGRES_USER=portfolio_user
+      - POSTGRES_PASSWORD=portfolio_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

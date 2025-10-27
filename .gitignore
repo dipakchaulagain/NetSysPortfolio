@@ -1,3 +1,9 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,6 +26,64 @@ wheels/
 *.egg
 MANIFEST
 
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Docker
+.dockerignore
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
 .env
 .venv
 env/
@@ -28,28 +92,20 @@ ENV/
 env.bak/
 venv.bak/
 
-instance/
-.webassets-cache
+# Spyder project settings
+.spyderproject
+.spyproject
 
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
+# Rope project settings
+.ropeproject
 
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+# mkdocs documentation
+/site
 
-.DS_Store
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-node_modules/
+# Pyre type checker
+.pyre/
