@@ -60,6 +60,21 @@ class Testimonial(db.Model):
     def __repr__(self):
         return f'<Testimonial from {self.name}>'
 
+class Experience(db.Model):
+    __tablename__ = 'experiences'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    company = db.Column(db.String(200), nullable=False)
+    location = db.Column(db.String(200))
+    start_date = db.Column(db.String(50), nullable=False)
+    end_date = db.Column(db.String(50))
+    description = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f'<Experience {self.title} at {self.company}>'
+
 class ContactMessage(db.Model):
     __tablename__ = 'contact_messages'
     
