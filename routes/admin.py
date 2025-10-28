@@ -305,8 +305,12 @@ def settings():
     form = SiteSettingsForm()
     
     if form.validate_on_submit():
+        site_settings.header_title = form.header_title.data
+        site_settings.page_title = form.page_title.data
         site_settings.profile_name = form.profile_name.data
+        site_settings.position = form.position.data
         site_settings.tagline = form.tagline.data
+        site_settings.about_me = form.about_me.data
         
         if form.profile_image.data:
             image_file = form.profile_image.data
@@ -340,9 +344,13 @@ def settings():
         flash('Settings updated successfully!', 'success')
         return redirect(url_for('admin.settings'))
     
+    form.header_title.data = site_settings.header_title
+    form.page_title.data = site_settings.page_title
     form.profile_name.data = site_settings.profile_name
+    form.position.data = site_settings.position
     form.current_image.data = site_settings.profile_image
     form.tagline.data = site_settings.tagline
+    form.about_me.data = site_settings.about_me
     form.current_cv.data = site_settings.cv_filename
     
     social_links = SocialLink.query.order_by(SocialLink.order).all()

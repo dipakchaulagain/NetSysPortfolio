@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Network & System Engineer Portfolio{% endblock %}
+{% block title %}{{ settings.page_title }} - Portfolio{% endblock %}
 
 {% block content %}
 <nav class="fixed w-full top-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-cyan-500/20">
     <div class="container mx-auto px-4 sm:px-6 py-4">
         <div class="flex justify-between items-center">
-            <div class="text-xl sm:text-2xl font-bold text-cyan-400 font-mono">&lt;/NetSysEng&gt;</div>
+            <div class="text-xl sm:text-2xl font-bold text-cyan-400 font-mono">&lt;/{{ settings.header_title }}&gt;</div>
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex space-x-8">
@@ -62,8 +62,7 @@
             </div>
         </div>
         <h1 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-6 slide-in-left">
-            <span class="text-cyan-400">&gt;_</span> Network &
-            <br><span class="text-green-400">System Engineer</span>
+            <span class="text-cyan-400">&gt;_</span> <span class="text-green-400">{{ settings.position }}</span>
         </h1>
         <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 mb-8 font-mono px-4 slide-in-right">
             {{ settings.tagline }}
@@ -93,19 +92,7 @@
                     <span class="text-green-400 font-mono">user@portfolio:~$</span>
                     <span class="text-gray-400 font-mono"> cat about.txt</span>
                 </div>
-                <p class="text-gray-300 leading-relaxed mb-4">
-                    Experienced Network and System Engineer specializing in designing, implementing, and maintaining complex IT infrastructure. 
-                    With expertise in network architecture, system administration, virtualization, and cloud technologies, I deliver scalable 
-                    and secure solutions for enterprise environments.
-                </p>
-                <p class="text-gray-300 leading-relaxed mb-4">
-                    My background includes extensive work with Cisco and Juniper networking equipment, VMware virtualization platforms, 
-                    Linux and Windows Server environments, and various cloud platforms including AWS, Azure, and GCP.
-                </p>
-                <p class="text-gray-300 leading-relaxed">
-                    I'm passionate about automation, security best practices, and staying current with emerging technologies in the 
-                    infrastructure and networking space.
-                </p>
+                <p class="text-gray-300 leading-relaxed whitespace-pre-line">{{ settings.about_me }}</p>
             </div>
         </div>
     </div>

@@ -93,9 +93,13 @@ class SiteSettings(db.Model):
     __tablename__ = 'site_settings'
     
     id = db.Column(db.Integer, primary_key=True)
+    header_title = db.Column(db.String(100), default='NetSysEng')
+    page_title = db.Column(db.String(100), default='Network & System Engineer')
     profile_name = db.Column(db.String(100), default='John Anderson')
+    position = db.Column(db.String(200), default='Network & System Engineer')
     profile_image = db.Column(db.String(500), default='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop')
     tagline = db.Column(db.String(200), default='Building robust infrastructure | Optimizing networks | Securing systems')
+    about_me = db.Column(db.Text, default='Experienced Network and System Engineer specializing in designing, implementing, and maintaining complex IT infrastructure. With expertise in network architecture, system administration, virtualization, and cloud technologies, I deliver scalable and secure solutions for enterprise environments.')
     cv_filename = db.Column(db.String(255), default='John_Anderson_CV.pdf')
     
     def __repr__(self):

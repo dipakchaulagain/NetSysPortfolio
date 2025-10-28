@@ -50,10 +50,14 @@ class ExperienceForm(FlaskForm):
     submit = SubmitField('Save Experience')
 
 class SiteSettingsForm(FlaskForm):
+    header_title = StringField('Header Title (e.g., NetSysEng)', validators=[DataRequired(), Length(min=2, max=100)])
+    page_title = StringField('Page Title', validators=[DataRequired(), Length(min=2, max=100)])
     profile_name = StringField('Profile Name', validators=[DataRequired(), Length(min=2, max=100)])
+    position = StringField('Position (Hero Section)', validators=[DataRequired(), Length(min=2, max=200)])
     profile_image = FileField('Upload Profile Image', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only (jpg, png, gif, webp)')])
     current_image = StringField('Current Image Path')
     tagline = StringField('Tagline', validators=[DataRequired(), Length(max=200)])
+    about_me = TextAreaField('About Me', validators=[DataRequired()])
     cv_file = FileField('Upload CV (PDF)', validators=[Optional(), FileAllowed(['pdf'], 'PDF files only')])
     current_cv = StringField('Current CV Filename')
     submit = SubmitField('Save Settings')

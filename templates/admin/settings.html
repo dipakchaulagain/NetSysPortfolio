@@ -12,6 +12,28 @@
             {{ form.hidden_tag() }}
             
             <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.header_title.label }}</label>
+                {{ form.header_title(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.header_title.errors %}
+                    {% for error in form.header_title.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Displayed in the navigation header (e.g., &lt;/NetSysEng&gt;)</p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.page_title.label }}</label>
+                {{ form.page_title(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.page_title.errors %}
+                    {% for error in form.page_title.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Browser tab title</p>
+            </div>
+            
+            <div class="mb-4">
                 <label class="block text-gray-400 mb-2 font-mono">{{ form.profile_name.label }}</label>
                 {{ form.profile_name(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
                 {% if form.profile_name.errors %}
@@ -19,6 +41,17 @@
                         <p class="text-red-400 text-sm mt-1">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.position.label }}</label>
+                {{ form.position(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.position.errors %}
+                    {% for error in form.position.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Job title shown in hero section (e.g., Network & System Engineer)</p>
             </div>
             
             <div class="mb-4">
@@ -51,6 +84,18 @@
                         <p class="text-red-400 text-sm mt-1">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Short tagline below position in hero section</p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.about_me.label }}</label>
+                {{ form.about_me(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none", rows="6") }}
+                {% if form.about_me.errors %}
+                    {% for error in form.about_me.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">About Me section content</p>
             </div>
             
             <div class="mb-6">

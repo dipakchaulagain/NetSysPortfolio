@@ -191,9 +191,13 @@ def populate_database():
         existing_settings = SiteSettings.query.first()
         if not existing_settings:
             site_settings = SiteSettings(
+                header_title='NetSysEng',
+                page_title='Network & System Engineer',
                 profile_name='John Anderson',
+                position='Network & System Engineer',
                 profile_image='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
                 tagline='Building robust infrastructure | Optimizing networks | Securing systems',
+                about_me='Experienced Network and System Engineer specializing in designing, implementing, and maintaining complex IT infrastructure. With expertise in network architecture, system administration, virtualization, and cloud technologies, I deliver scalable and secure solutions for enterprise environments.\n\nMy background includes extensive work with Cisco and Juniper networking equipment, VMware virtualization platforms, Linux and Windows Server environments, and various cloud platforms including AWS, Azure, and GCP.\n\nI\'m passionate about automation, security best practices, and staying current with emerging technologies in the infrastructure and networking space.',
                 cv_filename='John_Anderson_CV.pdf'
             )
             db.session.add(site_settings)
