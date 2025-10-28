@@ -1,5 +1,5 @@
 from app import create_app
-from models import db, User, Project, Skill, Experience, Testimonial
+from models import db, User, Project, Skill, Experience, Testimonial, SiteSettings, SocialLink
 from werkzeug.security import generate_password_hash
 import os
 
@@ -21,6 +21,7 @@ def populate_database():
             Skill.query.delete()
             Experience.query.delete()
             Testimonial.query.delete()
+            SocialLink.query.delete()
             db.session.commit()
         else:
             print("Skipping demo data population (POPULATE_DEMO_DATA=false)")
@@ -178,11 +179,30 @@ def populate_database():
             ]
             db.session.bulk_save_objects(testimonials)
             
-            db.session.commit()
-            print("\nDatabase populated successfully!")
-            print("\nAdmin credentials:")
-            print("Username: admin")
-            print(f"Password: {admin_password}")
+            print("Adding social media links...")
+            social_links = [
+                SocialLink(platform='LinkedIn', url='https://linkedin.com/in/yourprofile', icon_class='fab fa-linkedin', order=1),
+                SocialLink(platform='GitHub', url='https://github.com/yourprofile', icon_class='fab fa-github', order=2),
+                SocialLink(platform='Twitter', url='https://twitter.com/yourprofile', icon_class='fab fa-twitter', order=3),
+            ]
+            db.session.bulk_save_objects(social_links)
+        
+        print("Setting up site settings...")
+        existing_settings = SiteSettings.query.first()
+        if not existing_settings:
+            site_settings = SiteSettings(
+                profile_name='John Anderson',
+                profile_image='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+                tagline='Building robust infrastructure | Optimizing networks | Securing systems',
+                cv_filename='John_Anderson_CV.pdf'
+            )
+            db.session.add(site_settings)
+        
+        db.session.commit()
+        print("\nDatabase populated successfully!")
+        print("\nAdmin credentials:")
+        print("Username: admin")
+        print(f"Password: {admin_password}")
 
 if __name__ == '__main__':
     populate_database()

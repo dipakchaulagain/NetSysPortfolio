@@ -1,0 +1,66 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="max-w-2xl">
+    <h1 class="text-3xl font-bold text-cyan-400 mb-8">
+        <i class="fas fa-share-alt mr-2"></i>{{ title }}
+    </h1>
+    
+    <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.platform.label }}</label>
+                {{ form.platform(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.platform.errors %}
+                    {% for error in form.platform.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">e.g., LinkedIn, GitHub, Twitter</p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.url.label }}</label>
+                {{ form.url(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.url.errors %}
+                    {% for error in form.url.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Full URL to your social media profile</p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.icon_class.label }}</label>
+                {{ form.icon_class(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.icon_class.errors %}
+                    {% for error in form.icon_class.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Font Awesome icon class (e.g., fab fa-linkedin, fab fa-github, fab fa-twitter)</p>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.order.label }}</label>
+                {{ form.order(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.order.errors %}
+                    {% for error in form.order.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Lower numbers appear first</p>
+            </div>
+            
+            <div class="flex gap-4">
+                {{ form.submit(class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition cursor-pointer") }}
+                <a href="{{ url_for('admin.settings') }}" class="bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold py-2 px-6 rounded-lg transition inline-block">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<h1 class="text-3xl font-bold text-cyan-400 mb-8">
+    <i class="fas fa-cog mr-2"></i>Site Settings
+</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6">
+        <h2 class="text-xl font-bold text-cyan-400 mb-6">Profile Settings</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.profile_name.label }}</label>
+                {{ form.profile_name(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.profile_name.errors %}
+                    {% for error in form.profile_name.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">Profile Image</label>
+                {% if settings.profile_image %}
+                <div class="mb-3 flex items-center gap-4">
+                    <img src="{{ settings.profile_image }}" alt="Current profile" class="w-24 h-24 rounded-full border-2 border-cyan-500 object-cover">
+                    <div class="text-gray-500 text-sm">
+                        <p>Current image</p>
+                        <p class="text-xs">{{ settings.profile_image }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="mb-2">
+                    {{ form.profile_image(class="w-full text-gray-300") }}
+                </div>
+                {% if form.profile_image.errors %}
+                    {% for error in form.profile_image.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Upload a new image (jpg, png, gif, webp)</p>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2 font-mono">{{ form.tagline.label }}</label>
+                {{ form.tagline(class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-2 text-gray-300 focus:border-cyan-500 focus:outline-none") }}
+                {% if form.tagline.errors %}
+                    {% for error in form.tagline.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-400 mb-2 font-mono">CV File (PDF)</label>
+                {% if settings.cv_filename %}
+                <div class="mb-3 bg-gray-800 border border-gray-700 rounded-lg p-3">
+                    <p class="text-gray-400 text-sm"><i class="fas fa-file-pdf text-red-400 mr-2"></i>Current CV: {{ settings.cv_filename }}</p>
+                </div>
+                {% endif %}
+                <div class="mb-2">
+                    {{ form.cv_file(class="w-full text-gray-300") }}
+                </div>
+                {% if form.cv_file.errors %}
+                    {% for error in form.cv_file.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Upload a new CV PDF file</p>
+            </div>
+            
+            {{ form.submit(class="bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition cursor-pointer") }}
+        </form>
+    </div>
+    
+    <div class="bg-gray-900 border-2 border-cyan-500/30 rounded-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-cyan-400">Social Media Links</h2>
+            <a href="{{ url_for('admin.add_social_link') }}" class="bg-green-500 hover:bg-green-600 text-gray-900 font-bold py-1 px-4 rounded-lg transition text-sm">
+                <i class="fas fa-plus mr-1"></i>Add Link
+            </a>
+        </div>
+        
+        {% if social_links %}
+        <div class="space-y-3">
+            {% for link in social_links %}
+            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-cyan-500/50 transition">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="{{ link.icon_class }} text-cyan-400 text-lg"></i>
+                            <h3 class="text-gray-300 font-bold">{{ link.platform }}</h3>
+                        </div>
+                        <p class="text-gray-500 text-sm break-all">{{ link.url }}</p>
+                        <p class="text-gray-600 text-xs mt-1">Order: {{ link.order }}</p>
+                    </div>
+                    <div class="flex gap-2 ml-4">
+                        <a href="{{ url_for('admin.edit_social_link', id=link.id) }}" class="text-cyan-400 hover:text-cyan-300">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.delete_social_link', id=link.id) }}" style="display: inline;" onsubmit="return confirm('Delete this social link?')">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-red-400 hover:text-red-300 bg-transparent border-0 cursor-pointer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-gray-500 py-8">No social links added yet. Add your first link!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

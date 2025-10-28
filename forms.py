@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, TextAreaField, IntegerField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional
 
@@ -47,3 +48,19 @@ class ExperienceForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()])
     order = IntegerField('Display Order', validators=[Optional(), NumberRange(min=0)], default=0)
     submit = SubmitField('Save Experience')
+
+class SiteSettingsForm(FlaskForm):
+    profile_name = StringField('Profile Name', validators=[DataRequired(), Length(min=2, max=100)])
+    profile_image = FileField('Upload Profile Image', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only (jpg, png, gif, webp)')])
+    current_image = StringField('Current Image Path')
+    tagline = StringField('Tagline', validators=[DataRequired(), Length(max=200)])
+    cv_file = FileField('Upload CV (PDF)', validators=[Optional(), FileAllowed(['pdf'], 'PDF files only')])
+    current_cv = StringField('Current CV Filename')
+    submit = SubmitField('Save Settings')
+
+class SocialLinkForm(FlaskForm):
+    platform = StringField('Platform Name', validators=[DataRequired(), Length(min=2, max=50)])
+    url = StringField('URL', validators=[DataRequired(), Length(max=500)])
+    icon_class = StringField('Icon Class (e.g., fab fa-linkedin)', validators=[DataRequired(), Length(max=100)])
+    order = IntegerField('Display Order', validators=[Optional(), NumberRange(min=0)], default=0)
+    submit = SubmitField('Save Social Link')

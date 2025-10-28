@@ -88,3 +88,27 @@ class ContactMessage(db.Model):
     
     def __repr__(self):
         return f'<ContactMessage from {self.name}>'
+
+class SiteSettings(db.Model):
+    __tablename__ = 'site_settings'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    profile_name = db.Column(db.String(100), default='John Anderson')
+    profile_image = db.Column(db.String(500), default='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop')
+    tagline = db.Column(db.String(200), default='Building robust infrastructure | Optimizing networks | Securing systems')
+    cv_filename = db.Column(db.String(255), default='John_Anderson_CV.pdf')
+    
+    def __repr__(self):
+        return f'<SiteSettings {self.profile_name}>'
+
+class SocialLink(db.Model):
+    __tablename__ = 'social_links'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    platform = db.Column(db.String(50), nullable=False)
+    url = db.Column(db.String(500), nullable=False)
+    icon_class = db.Column(db.String(100), nullable=False)
+    order = db.Column(db.Integer, default=0)
+    
+    def __repr__(self):
+        return f'<SocialLink {self.platform}>'

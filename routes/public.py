@@ -1,8 +1,20 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import db, Project, Skill, Testimonial, ContactMessage, Experience
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_from_directory
+from models import db, Project, Skill, Testimonial, ContactMessage, Experience, SiteSettings, SocialLink
 from forms import ContactForm
+import os
 
 public_bp = Blueprint('public', __name__)
+
+def get_site_settings():
+    settings = SiteSettings.query.first()
+    if not settings:
+        settings = SiteSettings()
+        db.session.add(settings)
+        db.session.commit()
+    return settings
+
+def get_social_links():
+    return SocialLink.query.order_by(SocialLink.order).all()
 
 @public_bp.route('/')
 def index():
@@ -10,6 +22,8 @@ def index():
     skills = Skill.query.order_by(Skill.category, Skill.order).all()
     experiences = Experience.query.order_by(Experience.order, Experience.id.desc()).all()
     testimonials = Testimonial.query.order_by(Testimonial.order, Testimonial.date_created.desc()).all()
+    settings = get_site_settings()
+    social_links = get_social_links()
     
     skills_by_category = {}
     for skill in skills:
@@ -22,7 +36,9 @@ def index():
                          projects=projects, 
                          skills_by_category=skills_by_category,
                          experiences=experiences,
-                         testimonials=testimonials)
+                         testimonials=testimonials,
+                         settings=settings,
+                         social_links=social_links)
 
 @public_bp.route('/projects')
 def projects():
@@ -45,3 +61,26 @@ def contact():
         return redirect(url_for('public.contact'))
     
     return render_template('public/contact.html', form=form)
+
+@public_bp.route('/download-cv')
+def download_cv():
+    settings = get_site_settings()
+    
+    if not settings.cv_filename:
+        flash('CV file not available for download.', 'info')
+        return redirect(url_for('public.index'))
+    
+    upload_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'uploads', 'documents')
+    upload_path = os.path.join(upload_dir, settings.cv_filename)
+    
+    if os.path.exists(upload_path):
+        return send_from_directory(upload_dir, settings.cv_filename, as_attachment=True)
+    
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'documents')
+    static_path = os.path.join(static_dir, settings.cv_filename)
+    
+    if os.path.exists(static_path):
+        return send_from_directory(static_dir, settings.cv_filename, as_attachment=True)
+    
+    flash('CV file not found.', 'danger')
+    return redirect(url_for('public.index'))

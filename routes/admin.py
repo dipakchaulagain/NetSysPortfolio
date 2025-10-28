@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse, urljoin
-from models import db, User, Project, Skill, Testimonial, ContactMessage, Experience
-from forms import LoginForm, ProjectForm, SkillForm, TestimonialForm, ExperienceForm
+from werkzeug.utils import secure_filename
+from models import db, User, Project, Skill, Testimonial, ContactMessage, Experience, SiteSettings, SocialLink
+from forms import LoginForm, ProjectForm, SkillForm, TestimonialForm, ExperienceForm, SiteSettingsForm, SocialLinkForm
+import os
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -290,3 +292,102 @@ def delete_message(id):
     db.session.commit()
     flash('Message deleted successfully!', 'success')
     return redirect(url_for('admin.messages'))
+
+@admin_bp.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    site_settings = SiteSettings.query.first()
+    if not site_settings:
+        site_settings = SiteSettings()
+        db.session.add(site_settings)
+        db.session.commit()
+    
+    form = SiteSettingsForm()
+    
+    if form.validate_on_submit():
+        site_settings.profile_name = form.profile_name.data
+        site_settings.tagline = form.tagline.data
+        
+        if form.profile_image.data:
+            image_file = form.profile_image.data
+            filename = secure_filename(image_file.filename)
+            timestamp = str(int(__import__('time').time()))
+            filename = f"{timestamp}_{filename}"
+            
+            upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'uploads', 'images')
+            os.makedirs(upload_folder, exist_ok=True)
+            
+            filepath = os.path.join(upload_folder, filename)
+            image_file.save(filepath)
+            
+            site_settings.profile_image = f"/static/uploads/images/{filename}"
+        
+        if form.cv_file.data:
+            cv_file = form.cv_file.data
+            filename = secure_filename(cv_file.filename)
+            timestamp = str(int(__import__('time').time()))
+            filename = f"{timestamp}_{filename}"
+            
+            upload_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static', 'uploads', 'documents')
+            os.makedirs(upload_folder, exist_ok=True)
+            
+            filepath = os.path.join(upload_folder, filename)
+            cv_file.save(filepath)
+            
+            site_settings.cv_filename = filename
+        
+        db.session.commit()
+        flash('Settings updated successfully!', 'success')
+        return redirect(url_for('admin.settings'))
+    
+    form.profile_name.data = site_settings.profile_name
+    form.current_image.data = site_settings.profile_image
+    form.tagline.data = site_settings.tagline
+    form.current_cv.data = site_settings.cv_filename
+    
+    social_links = SocialLink.query.order_by(SocialLink.order).all()
+    return render_template('admin/settings.html', form=form, social_links=social_links, settings=site_settings)
+
+@admin_bp.route('/social-links/add', methods=['GET', 'POST'])
+@login_required
+def add_social_link():
+    form = SocialLinkForm()
+    if form.validate_on_submit():
+        social_link = SocialLink(
+            platform=form.platform.data,
+            url=form.url.data,
+            icon_class=form.icon_class.data,
+            order=form.order.data
+        )
+        db.session.add(social_link)
+        db.session.commit()
+        flash('Social link added successfully!', 'success')
+        return redirect(url_for('admin.settings'))
+    
+    return render_template('admin/social_link_form.html', form=form, title='Add Social Link')
+
+@admin_bp.route('/social-links/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_social_link(id):
+    social_link = SocialLink.query.get_or_404(id)
+    form = SocialLinkForm(obj=social_link)
+    
+    if form.validate_on_submit():
+        social_link.platform = form.platform.data
+        social_link.url = form.url.data
+        social_link.icon_class = form.icon_class.data
+        social_link.order = form.order.data
+        db.session.commit()
+        flash('Social link updated successfully!', 'success')
+        return redirect(url_for('admin.settings'))
+    
+    return render_template('admin/social_link_form.html', form=form, title='Edit Social Link')
+
+@admin_bp.route('/social-links/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_social_link(id):
+    social_link = SocialLink.query.get_or_404(id)
+    db.session.delete(social_link)
+    db.session.commit()
+    flash('Social link deleted successfully!', 'success')
+    return redirect(url_for('admin.settings'))

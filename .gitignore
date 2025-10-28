@@ -52,6 +52,9 @@ logs/
 *.db
 *.sqlite3
 
+# Uploads
+static/uploads/
+
 # Docker
 .dockerignore
 
